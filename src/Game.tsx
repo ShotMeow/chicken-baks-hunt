@@ -1,11 +1,10 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import type { FC, MouseEvent } from "react";
 
 import "./assets/styles/globals.css";
 import Mirage from "@/app/maps/Mirage";
 import { GameContext } from "@/app/providers/game";
 import { ModalsProvider } from "@/app/providers/modal";
-import EndModal from "@/app/providers/modal/ui/modals/EndModal";
 import cursorBase from "@/assets/cursors/turquoise.svg";
 import { Chicken } from "@/entities/chicken";
 import { chickenSpawn } from "@/utils/chickenSpawn";
@@ -15,11 +14,12 @@ import clsx from "clsx";
 
 const Game: FC = () => {
 	const gameContainerRef = useRef<HTMLDivElement>(null);
-	const [spawnInterval, setSpawnInterval] = useState<number>(2000);
 	const {
 		limit,
 		setScore,
 		isPaused,
+		spawnInterval,
+		setSpawnInterval,
 		chickens,
 		setChickens,
 		setHits,
@@ -27,49 +27,46 @@ const Game: FC = () => {
 	} = useContext(GameContext);
 
 	const limitRef = useRef<number>(limit);
+	const spawnIntervalRef = useRef<number>(spawnInterval);
 
 	useEffect(() => {
 		limitRef.current = limit;
 	}, [limit]);
 
 	useEffect(() => {
-		let spawnIntervalId: number;
-		let complicationIntervalId: number;
-		const handleVisibilityChange = () => {
-			if (document.hidden) {
-				clearInterval(spawnIntervalId);
-				clearInterval(complicationIntervalId);
-			} else {
-				if (!isPaused) {
-					spawnIntervalId = setInterval(() => {
-						if (limitRef.current >= 12) {
-							return clearInterval(spawnIntervalId);
-						}
-						chickenSpawn(gameContainerRef, setChickens);
-					}, spawnInterval);
-					complicationIntervalId = setInterval(() => {
-						if (limitRef.current >= 12) {
-							return clearInterval(complicationIntervalId);
-						}
-						complicationInterval(
-							setSpawnInterval,
-							spawnInterval,
-							complicationIntervalId,
-						);
-					}, 1000);
-				}
-			}
-		};
+		spawnIntervalRef.current = spawnInterval;
+	}, [spawnInterval]);
 
-		handleVisibilityChange();
-		document.addEventListener("visibilitychange", handleVisibilityChange);
+	let spawnIntervalId: number;
+	let complicationIntervalId: number;
+	useEffect(() => {
+		if (!isPaused) {
+			spawnIntervalId = setInterval(() => {
+				if (limitRef.current >= 12) {
+					return clearInterval(spawnIntervalId);
+				}
+				chickenSpawn(gameContainerRef, setChickens);
+			}, spawnIntervalRef.current);
+			complicationIntervalId = setInterval(() => {
+				if (limitRef.current >= 12) {
+					return clearInterval(complicationIntervalId);
+				}
+				complicationInterval(
+					setSpawnInterval,
+					spawnIntervalRef.current,
+					complicationIntervalId,
+				);
+			}, 1000);
+		} else {
+			clearInterval(spawnIntervalId);
+			clearInterval(complicationIntervalId);
+		}
 
 		return () => {
 			clearInterval(spawnIntervalId);
 			clearInterval(complicationIntervalId);
-			document.removeEventListener("visibilitychange", handleVisibilityChange);
 		};
-	}, [isPaused]);
+	}, [isPaused, spawnIntervalRef.current]);
 
 	const handleShot = (event: MouseEvent<HTMLDivElement>) => {
 		setShots((prev) => prev + 1);
@@ -95,7 +92,7 @@ const Game: FC = () => {
 			}}
 			onMouseDown={handleShot}
 			ref={gameContainerRef}
-			className="relative aspect-game size-full text-xs font-semibold text-neutral-50"
+			className="relative aspect-game size-full text-xs font-semibold text-neutral-50 select-none"
 		>
 			<Header />
 			<div>
