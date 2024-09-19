@@ -1,0 +1,52 @@
+{
+	"name": "chicken-baks-hunt",
+	"version": "2.0.1",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"types": "dist/types.d.ts",
+	"files": ["dist"],
+	"scripts": {
+		"build": "rollup -c --bundleConfigAsCjs",
+		"format": "biome format --write .",
+		"lint": "biome lint --write ."
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ShotMeow/chicken-baks-hunt.git"
+	},
+	"keywords": ["game", "duck", "shooter", "duck-hunt", "baks", "baks.gg"],
+	"author": "Kai 'ShotMeow' Goldman",
+	"bugs": {
+		"url": "https://github.com/ShotMeow/chicken-baks-hunt/issues"
+	},
+	"homepage": "https://github.com/ShotMeow/chicken-baks-hunt#readme",
+	"license": "ISC",
+	"description": "NPM module with isolate game for baks.gg",
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.1",
+		"@rollup/plugin-alias": "^5.1.0",
+		"@rollup/plugin-commonjs": "^26.0.1",
+		"@rollup/plugin-image": "^3.0.3",
+		"@rollup/plugin-json": "^6.1.0",
+		"@rollup/plugin-node-resolve": "^15.2.3",
+		"@rollup/plugin-terser": "^0.4.4",
+		"@rollup/plugin-typescript": "^11.1.6",
+		"@types/react": "^18.3.7",
+		"autoprefixer": "^10.4.20",
+		"clsx": "^2.1.1",
+		"postcss": "^8.4.47",
+		"postcss-import": "^16.1.0",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"rollup": "^4.21.3",
+		"rollup-plugin-dts": "^6.1.1",
+		"rollup-plugin-peer-deps-external": "^2.2.4",
+		"rollup-plugin-postcss": "^4.0.2",
+		"tailwindcss": "^3.4.12",
+		"tslib": "^2.7.0",
+		"typescript": "^5.6.2"
+	},
+	"dependencies": {
+		"lottie-react": "^2.4.0"
+	}
+}
